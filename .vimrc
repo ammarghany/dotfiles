@@ -127,3 +127,10 @@ let g:conoline_use_colorscheme_default_insert=1
 
 set cursorcolumn
 
+nnoremap n nzz
+nnoremap N Nzz
+nnoremap * *zz
+nnoremap # #zz
+nnoremap g* g*zz
+nnoremap g# g#zz
+
