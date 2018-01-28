@@ -16,8 +16,8 @@ HISTCONTROL=ignoreboth
 shopt -s histappend
 
 # for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
-HISTSIZE=1000
-HISTFILESIZE=2000
+HISTSIZE=100000
+HISTFILESIZE=100000
 
 # check the window size after each command and, if necessary,
 # update the values of LINES and COLUMNS.
@@ -76,8 +76,8 @@ esac
 if [ -x /usr/bin/dircolors ]; then
     test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
     alias ls='ls --color=auto'
-    #alias dir='dir --color=auto'
-    #alias vdir='vdir --color=auto'
+    alias dir='dir --color=auto'
+    alias vdir='vdir --color=auto'
 
     alias grep='grep --color=auto'
     alias fgrep='fgrep --color=auto'
@@ -182,12 +182,19 @@ function ta ()
 {
     #clean older info
     rm -rf tags
-    rm -rf cscope.files
-    rm -rf cscope.out
+    rm -rf cscope.*
     # generate new info
-    find $PWD | egrep -i "\.(c|h|cpp)$" > cscope.files
-    ctags -R . *.c *.h *.cpp --tag-relative=yes ./
+    find $PWD | find . -name "*.c" -o -name "*.cpp" -o -name "*.h" -o -name "*.hpp" -o -name "Makefile" -o -name "*.mk" > cscope.files
+    cscope -q -R -b -i cscope.files
+    ctags -R . --tag-relative=yes
 }
 
 set ctermbg=none
 
+# Save and reload the history after each command finishes
+export PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
+
+
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow --glob "!.git/*"'
+bind -x '"\C-p": vim $(fzf);'

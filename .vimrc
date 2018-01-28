@@ -11,7 +11,7 @@ call vundle#begin()
 Plugin 'VundleVim/Vundle.vim'
 Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
-Plugin 'kien/ctrlp.vim'
+"Plugin 'kien/ctrlp.vim'
 Plugin 'tpope/vim-surround'
 " Plugin 'altercation/vim-colors-solarized'
 Plugin 'scrooloose/syntastic'
@@ -19,7 +19,7 @@ Plugin 'mileszs/ack.vim'
 Plugin 'takac/vim-hardtime'
 Plugin 'valloric/youcompleteme'
 Plugin 'lifepillar/vim-solarized8'
-Plugin 'vim-scripts/cscope.vim'
+"Plugin 'vim-scripts/cscope.vim'
 Plugin 'scrooloose/nerdtree'
 Plugin 'bling/vim-bufferline'
 Plugin 'qpkorr/vim-bufkill'
@@ -30,6 +30,10 @@ Plugin 'majutsushi/tagbar'
 Plugin 'miyakogi/conoline.vim'
 Plugin 'nanotech/jellybeans.vim'
 Plugin 'dracula/vim'
+Plugin 'junegunn/fzf.vim'
+Plugin 'tpope/vim-fugitive'
+Plugin 'tweekmonster/fzf-filemru'
+Plugin 'pbogut/fzf-mru.vim'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -55,12 +59,12 @@ let g:Powerline_symbols = 'fancy'
 
 
 "ctrlp
-let g:ctrlp_map = '<c-p>'
-let g:ctrlp_cmd = 'CtrlP'
-let g:ctrlp_working_path_mode = 'ra'
-set wildignore+=*/tmp/*,*.so,*.swp,*.zip     " MacOSX/Linux
-let g:ctrlp_custom_ignore = '\v[\/]\.(git|hg|svn)$'
-let g:ctrlp_user_command = 'find %s -type f'        " MacOSX/Linux
+"let g:ctrlp_map = '<c-p>'
+"let g:ctrlp_cmd = 'CtrlP'
+"let g:ctrlp_working_path_mode = 'ra'
+"set wildignore+=*/tmp/*,*.so,*.swp,*.zip     " MacOSX/Linux
+"let g:ctrlp_custom_ignore = '\v[\/]\.(git|hg|svn)$'
+"let g:ctrlp_user_command = 'find %s -type f'        " MacOSX/Linux
 
 "vim-colors-solarized
 syntax enable
@@ -88,9 +92,9 @@ set rtp+=/usr/local/lib/python2.7/dist-packages/powerline/bindings/vim/
 
 set nocompatible
 set encoding=utf-8
-if executable('ag')
-    let g:ackprg = 'ag --vimgrep'
-endif
+"if executable('ag')
+"    let g:ackprg = 'ag --vimgrep'
+"endif
 
 
 let g:hardtime_default_on = 0
@@ -116,9 +120,10 @@ nnoremap <C-e> :NERDTreeToggle<CR>
 
 ":autocmd CursorMoved * exe exists("HlUnderCursor")?HlUnderCursor?printf('match IncSearch /\V\<%s\>/', escape(expand('<cword>'), '/\')):'match none':""
 ":let HlUnderCursor=1
-":nnoremap <silent> <F3> :exe "let HlUnderCursor=exists(\"HlUnderCursor\")?HlUnderCursor*-1+1:1"<CR>
+":nnoremap <silent> <F3> :exe 
+"let HlUnderCursor=exists(\"HlUnderCursor\")?HlUnderCursor*-1+1:1"<CR>
 
-set cscopequickfix=s-,c-,d-,i-,t-,e-
+"set cscopequickfix=s-,c-,d-,i-,t-,e-
 
 nmap <F8> :TagbarToggle<CR>
 
@@ -133,4 +138,32 @@ nnoremap * *zz
 nnoremap # #zz
 nnoremap g* g*zz
 nnoremap g# g#zz
+
+set rtp+=~/.fzf
+
+if executable("rg")
+    set grepprg=rg\ --vimgrep\ --no-heading
+    set grepformat=%f:%l:%c:%m,%f:%l:%m
+endif
+
+let g:ackprg = 'rg --vimgrep --no-heading'
+
+"command! -bang -nargs=* Rg
+"      \ call fzf#vim#grep(
+"      \   'rg --column --line-number --no-heading --color=always --ignore-case'.shellescape(<q-args>), 1,
+"      \   <bang>0 ? fzf#vim#with_preview('up:60%')
+"      \           : fzf#vim#with_preview('right:50%:hidden', '?'),
+"      \   <bang>0)
+
+nnoremap <C-p>a :Rg<CR>
+nnoremap <C-p>f :Files<CR>
+nnoremap <C-p>m :FZFMru<CR>
+nnoremap <C-p>b :Buffers<CR>
+nnoremap <C-p>h :History<CR>
+
+"nnoremap g] :call fzf#vim#tags(expand('<cword>'), {'options': '--exact --select-1 --exit-0'})<CR>
+
+set incsearch
+
+set scrolloff=999
 
