@@ -35,10 +35,24 @@ Plugin 'tpope/vim-fugitive'
 Plugin 'tweekmonster/fzf-filemru'
 Plugin 'pbogut/fzf-mru.vim'
 
+"Plugin 'AutoClose'
+"Plugin 'townk/vim-autoclose'
+"Plugin 'jiangmiao/auto-pairs'
+
+Plugin 'thaerkh/vim-workspace'
+Plugin 'justinmk/vim-sneak'
+
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
 filetype plugin indent on    " required
 " To ignore plugin indent changes, instead use:
+" show existing tab with 4 spaces width
+set tabstop=4
+" when indenting with '>', use 4 spaces width
+set shiftwidth=4
+" On pressing tab, insert 4 spaces
+"set expandtab
+
 "filetype plugin on
 "
 " Brief help
@@ -66,12 +80,6 @@ let g:Powerline_symbols = 'fancy'
 "let g:ctrlp_custom_ignore = '\v[\/]\.(git|hg|svn)$'
 "let g:ctrlp_user_command = 'find %s -type f'        " MacOSX/Linux
 
-"vim-colors-solarized
-syntax enable
-set background=dark
-colorscheme solarized8_dark
-"colorscheme jellybeans
-"colorscheme dracula
 """""""""""
 "set guifont=Monaco:h10 noanti
 "let g:jellybeans_overrides = {
@@ -83,6 +91,13 @@ let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
 let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
 let g:solarized_termcolors=256
 
+"vim-colors-solarized
+syntax enable
+set background=dark
+colorscheme solarized8_dark
+"colorscheme jellybeans
+"colorscheme dracula
+"
 "syntastic
 
 set laststatus=2
@@ -105,9 +120,9 @@ set number
 set clipboard=unnamedplus
 
 "Youcompleteme fix
-let g:ycm_global_ycm_extra_conf = '~/.vim/bundle/youcompleteme/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py'
+let g:ycm_global_ycm_extra_conf = '~/.vim/.ycm_extra_conf.py'
 
-set paste
+"set paste
 
 "open nerdtree on startup
 "autocmd VimEnter * NERDTree
@@ -120,7 +135,7 @@ nnoremap <C-e> :NERDTreeToggle<CR>
 
 ":autocmd CursorMoved * exe exists("HlUnderCursor")?HlUnderCursor?printf('match IncSearch /\V\<%s\>/', escape(expand('<cword>'), '/\')):'match none':""
 ":let HlUnderCursor=1
-":nnoremap <silent> <F3> :exe 
+":nnoremap <silent> <F3> :exe
 "let HlUnderCursor=exists(\"HlUnderCursor\")?HlUnderCursor*-1+1:1"<CR>
 
 "set cscopequickfix=s-,c-,d-,i-,t-,e-
@@ -132,38 +147,43 @@ let g:conoline_use_colorscheme_default_insert=1
 
 set cursorcolumn
 
-nnoremap n nzz
-nnoremap N Nzz
-nnoremap * *zz
-nnoremap # #zz
-nnoremap g* g*zz
-nnoremap g# g#zz
+"nnoremap n nzz
+"nnoremap N Nzz
+"nnoremap * *zz
+"nnoremap # #zz
+"nnoremap g* g*zz
+"nnoremap g# g#zz
 
 set rtp+=~/.fzf
 
-if executable("rg")
-    set grepprg=rg\ --vimgrep\ --no-heading
-    set grepformat=%f:%l:%c:%m,%f:%l:%m
-endif
+let g:rg_command = '
+  \ rg --column --line-number --no-heading --fixed-strings --ignore-case --no-ignore --hidden --follow --color "always"
+  \ -g "*.{mk,js,json,php,md,styl,jade,html,config,py,cpp,c,go,hs,rb,conf}"
+  \ -g "!{.git,node_modules,vendor}/*" '
 
-let g:ackprg = 'rg --vimgrep --no-heading'
+command! -bang -nargs=* Rg call fzf#vim#grep(g:rg_command .shellescape(<q-args>), 1, <bang>0)
 
-"command! -bang -nargs=* Rg
-"      \ call fzf#vim#grep(
-"      \   'rg --column --line-number --no-heading --color=always --ignore-case'.shellescape(<q-args>), 1,
-"      \   <bang>0 ? fzf#vim#with_preview('up:60%')
-"      \           : fzf#vim#with_preview('right:50%:hidden', '?'),
-"      \   <bang>0)
 
 nnoremap <C-p>a :Rg<CR>
 nnoremap <C-p>f :Files<CR>
 nnoremap <C-p>m :FZFMru<CR>
 nnoremap <C-p>b :Buffers<CR>
 nnoremap <C-p>h :History<CR>
+nnoremap <C-p>l :Lines<CR>
+nnoremap <C-p>r :History:<CR>
 
-"nnoremap g] :call fzf#vim#tags(expand('<cword>'), {'options': '--exact --select-1 --exit-0'})<CR>
+map f <Plug>Sneak_s
+map F <Plug>Sneak_S
 
 set incsearch
 
 set scrolloff=999
+
+set ttimeoutlen=0
+set noesckeys
+
+set ignorecase
+
+"Remove all trailing whitespace by pressing F5
+nnoremap <F5> :let _s=@/<Bar>:%s/\s\+$//e<Bar>:let @/=_s<Bar><CR>
 
