@@ -112,7 +112,7 @@ if ! shopt -oq posix; then
     . /etc/bash_completion
   fi
 fi
-source /opt/ros/indigo/setup.bash
+#source /opt/ros/indigo/setup.bash
 source ~/catkin_ws/devel/setup.bash
 export PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\W\[\033[00m\]\$ '
 
@@ -184,9 +184,11 @@ function ta ()
     rm -rf tags
     rm -rf cscope.*
     # generate new info
-    find $PWD | find . -name "*.c" -o -name "*.cpp" -o -name "*.h" -o -name "*.hpp" -o -name "Makefile" -o -name "*.mk" > cscope.files
+    find $PWD | find -L . -name "*.c" -o -name "*.cpp" -o -name "*.h" -o -name "*.hpp" -o -name "Makefile" -o -name "*.mk" -o -name "*.s" \
+	-o -name "*.S"> cscope.files
     cscope -q -R -b -i cscope.files
-    ctags -R . --tag-relative=yes
+    ctags -R --sort=1 --tag-relative=yes --fields=+l --langmap=c:.c.h .
+    #find . -type f -name '*.h' | sed -r 's|/[^/]+$||' |sort |uniq > include.dirs
 }
 
 set ctermbg=none
@@ -198,3 +200,10 @@ export PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow --glob "!.git/*"'
 bind -x '"\C-p": vim $(fzf);'
+
+export PATH=$PATH:$HOME/.cargo/bin
+
+export PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig/
+
+alias tmux="TERM=screen-256color-bce tmux"
+
