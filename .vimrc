@@ -1,5 +1,7 @@
+set ff=unix
 set nocompatible              " be iMproved, required
 filetype off                  " required
+let mapleader = ','
 
 " set the runtime path to include Vundle and initialize
 set rtp+=~/.vim/bundle/Vundle.vim
@@ -10,21 +12,13 @@ call vundle#begin()
 " let Vundle manage Vundle, required
 Plugin 'VundleVim/Vundle.vim'
 
-"Plugin 'wesleyche/trinity'
-Plugin 'majutsushi/tagbar'
-Plugin 'scrooloose/nerdtree'
-Plugin 'taglist.vim'
-Plugin 'wesleyche/srcexpl'
-Plugin 'chazy/cscope_maps'
+" The following are examples of different formats supported.
+" Keep Plugin commands between vundle#begin/end.
 
-Plugin 'yggdroot/leaderf'
-
-Plugin 'Valloric/YouCompleteMe'
-
-Plugin 'flazz/vim-colorschemes'
-
-
-Plugin 'scrooloose/nerdcommenter'
+Plugin 'junegunn/fzf'
+Plugin 'junegunn/fzf.vim'
+Plugin 'pbogut/fzf-mru.vim'
+"Plugin 'zackhsi/fzf-tags'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -40,57 +34,46 @@ filetype plugin indent on    " required
 "
 " see :h vundle for more details or wiki for FAQ
 " Put your non-Plugin stuff after this line
-"
 
-set wildmenu
+nnoremap <Leader>f :Files<CR>
+nnoremap <Leader>b :Buffers<CR>
+nnoremap <Leader>h :History<CR>
+nnoremap <Leader>r :History:<CR>
 
-colorscheme solarized
-set background=dark
+nnoremap <C-p>m :FZFMru<CR>
 
-" // Set "Enter" key to jump into the exact definition context 
-let g:SrcExpl_jumpKey = "<ENTER>" 
-
-" // Set "Space" key for back from the definition context 
-let g:SrcExpl_gobackKey = "<SPACE>" 
-
-"open nerdtree on startup
-"autocmd VimEnter * NERDTree
-"set cursor to code file
-"autocmd VimEnter * wincmd p
-"open nerdtreemirror on new tab
-"autocmd BufWinEnter * NERDTreeMirror
-
-nmap <F7> :NERDTreeToggle<CR>
-
-nmap <F8> :TagbarToggle<CR>
-
-" // The switch of the Source Explorer
-"nmap <F9> :SrcExplToggle<CR>
-
-" Fix broken vim colors in TMUX
-set term=screen-256color
-
-
-set ttimeoutlen=0
-set noesckeys
-
-set updatetime=250
-
-"leaderf options
-let g:Lf_FollowLinks=1
-
-"let g:ycm_global_ycm_extra_conf = '~/.vim/bundle/YouCompleteMe/.ycm_extra_conf.py'
-let g:ycm_global_ycm_extra_conf = './.ycm_extra_conf.py'
-let g:ycm_collect_identifiers_from_tags_files = 1
-let g:ycm_autoclose_preview_window_after_completion = 1
-
-
-nnoremap <C-p>f :Leaderf file<CR>
 nnoremap <C-p>n :Leaderf function<CR>
-nnoremap <C-p>m :Leaderf mru<CR>
-nnoremap <C-p>r :Leaderf cmdHistory<CR>
-nnoremap <C-p>h :Leaderf searchHistory<CR>
-nnoremap <C-p>b :Leaderf buffer<CR>
+nnoremap <C-p>s :Leaderf searchHistory<CR>
 
-set clipboard=unnamedplus
+"nmap <C-]> <Plug>(fzf_tags)
 
+" source: https://gist.github.com/amitab/cd051f1ea23c588109c6cfcb7d1d5776
+function! Cscope(option, query)
+  let color = '{ x = $1; $1 = ""; z = $3; $3 = ""; printf "\033[34m%s\033[0m:\033[31m%s\033[0m\011\033[37m%s\033[0m\n", x,z,$0; }'
+  let opts = {
+  \ 'source':  "cscope -dL" . a:option . " " . a:query . " | awk '" . color . "'",
+  \ 'options': ['--ansi', '--prompt', '> ',
+  \             '--multi', '--bind', 'alt-a:select-all,alt-d:deselect-all',
+  \             '--color', 'fg:188,fg+:222,bg+:#3a3a3a,hl+:104'],
+  \ 'down': '30%'
+  \ }
+  function! opts.sink(lines) 
+    let data = split(a:lines)
+    let file = split(data[0], ":")
+    execute 'e ' . '+' . file[1] . ' ' . file[0]
+  endfunction
+  call fzf#run(opts)
+endfunction
+
+nnoremap <silent> <Leader>cs :call Cscope('0', expand('<cword>'))<CR>
+nnoremap <silent> <Leader>cg :call Cscope('1', expand('<cword>'))<CR>
+nnoremap <silent> <Leader>cd :call Cscope('2', expand('<cword>'))<CR>
+nnoremap <silent> <Leader>cc :call Cscope('3', expand('<cword>'))<CR>
+nnoremap <silent> <Leader>ct :call Cscope('4', expand('<cword>'))<CR>
+"nnoremap <silent> ,cm :call Cscope('5', expand('<cword>'))<CR>
+nnoremap <silent> <Leader>ce :call Cscope('6', expand('<cword>'))<CR>
+"nnoremap <silent> <Leader>cf :call Cscope('7', expand('<cword>'))<CR>
+nnoremap <silent> <Leader>ci :call Cscope('8', expand('<cword>'))<CR>
+nnoremap <silent> <Leader>ca :call Cscope('9', expand('<cword>'))<CR>
+
+set clipboard+=unnamedplus

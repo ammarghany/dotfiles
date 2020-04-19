@@ -16,8 +16,8 @@ HISTCONTROL=ignoreboth
 shopt -s histappend
 
 # for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
-HISTSIZE=100000
-HISTFILESIZE=100000
+HISTSIZE=1000
+HISTFILESIZE=2000
 
 # check the window size after each command and, if necessary,
 # update the values of LINES and COLUMNS.
@@ -37,7 +37,7 @@ fi
 
 # set a fancy prompt (non-color, unless we know we "want" color)
 case "$TERM" in
-    xterm-color) color_prompt=yes;;
+    xterm-color|*-256color) color_prompt=yes;;
 esac
 
 # uncomment for a colored prompt, if the terminal has the capability; turned
@@ -76,13 +76,16 @@ esac
 if [ -x /usr/bin/dircolors ]; then
     test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
     alias ls='ls --color=auto'
-    alias dir='dir --color=auto'
-    alias vdir='vdir --color=auto'
+    #alias dir='dir --color=auto'
+    #alias vdir='vdir --color=auto'
 
     alias grep='grep --color=auto'
     alias fgrep='fgrep --color=auto'
     alias egrep='egrep --color=auto'
 fi
+
+# colored GCC warnings and errors
+#export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 
 # some more ls aliases
 alias ll='ls -alF'
@@ -112,71 +115,20 @@ if ! shopt -oq posix; then
     . /etc/bash_completion
   fi
 fi
-#source /opt/ros/indigo/setup.bash
-source ~/catkin_ws/devel/setup.bash
-export PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\W\[\033[00m\]\$ '
 
-alias eclipse='cd /opt/eclipse && ./eclipse'
-alias matlab='cd /opt/matlab/R2015a/bin/glnxa64 && sudo ./MATLAB'
-alias data='cd /media/abdullah/Data'
-alias ..='cd ..'
-alias ...='cd ../../'
-alias :q='exit'
-extract () {
-   if [ -f $1 ] ; then
-       case $1 in
-           *.tar.bz2)   tar xvjf $1    ;;
-           *.tar.gz)    tar xvzf $1    ;;
-           *.bz2)       bunzip2 $1     ;;
-           *.rar)       unrar x $1       ;;
-           *.gz)        gunzip $1      ;;
-           *.tar)       tar xvf $1     ;;
-           *.tbz2)      tar xvjf $1    ;;
-           *.tgz)       tar xvzf $1    ;;
-           *.zip)       unzip $1       ;;
-           *.Z)         uncompress $1  ;;
-           *.7z)        7z x $1        ;;
-           *)           echo "don't know how to extract '$1'..." ;;
-       esac
-   else
-       echo "'$1' is not a valid file!"
-   fi
- }
-export TERM="screen-256color"
-export TERM="xterm-256color"
+export GOROOT=/usr/local/go
+export GOPATH=$HOME/go
+export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
 
-export LIBOVERLAY_SCROLLBAR=0
+export PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
 
-export PATH=$PATH:/usr/local/gcc-arm-none-eabi-5_3-2016q1/bin/
-
-
-export NVM_DIR="/home/abdullah/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
-
-export PATH=$PATH:$HOME/opt/apache-maven-3.3.9/bin
-
-export PATH=$PATH:$HOME/Downloads/jBrowserDriver-v0.14.12/dist
+# If you use vi mode on bash, you need to add set -o vi before source ~/.fzf.bash in your .bashrc, so that it correctly sets up key bindings for vi mode.
 
 set -o vi
-set editing-mode vi
 
-#for solarized terminal colors
-if [ -f ~/.dir_colors/dircolors ]
-    then eval `dircolors ~/.dir_colors/dircolors`
-fi
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
-function mkcd {
-  if [ ! -n "$1" ]; then
-    echo "Enter a directory name"
-  elif [ -d $1 ]; then
-    echo "\`$1' already exists"
-  else
-    mkdir $1 && cd $1
-  fi
-}
-
-#so as not to be disturbed by Ctrl-S ctrl-Q in terminals:
-stty -ixon
+alias ..='cd ..'
 
 function ta ()
 {
@@ -191,19 +143,7 @@ function ta ()
     #find . -type f -name '*.h' | sed -r 's|/[^/]+$||' |sort |uniq > include.dirs
 }
 
-set ctermbg=none
-
-# Save and reload the history after each command finishes
-export PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
-
-
-[ -f ~/.fzf.bash ] && source ~/.fzf.bash
-export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow --glob "!.git/*"'
-bind -x '"\C-p": vim $(fzf);'
-
-export PATH=$PATH:$HOME/.cargo/bin
-
-export PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig/
-
 alias tmux="TERM=screen-256color-bce tmux"
+
+export FZF_DEFAULT_COMMAND='if [ -e cscope.files ]; then cat cscope.files; else find ./ -type f ; fi'                                                                       
 
