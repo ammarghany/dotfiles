@@ -115,8 +115,7 @@ if ! shopt -oq posix; then
     . /etc/bash_completion
   fi
 fi
-
-
+###
 export PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
 
 set -o vi
@@ -142,3 +141,6 @@ alias tmux="TERM=screen-256color-bce tmux"
 
 export FZF_DEFAULT_COMMAND='rg --files --follow' #  --hidden --no-ignore-vcs'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+
+alias gb='fzf-git-branch'
+alias gco='fzf-git-checkout'
