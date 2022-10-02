@@ -116,17 +116,10 @@ if ! shopt -oq posix; then
   fi
 fi
 
-export GOROOT=/usr/local/go
-export GOPATH=$HOME/go
-export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
 
 export PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
 
-# If you use vi mode on bash, you need to add set -o vi before source ~/.fzf.bash in your .bashrc, so that it correctly sets up key bindings for vi mode.
-
 set -o vi
-#set keymap vi-command
-#v: ""
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
