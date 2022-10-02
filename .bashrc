@@ -147,29 +147,5 @@ function ta ()
 
 alias tmux="TERM=screen-256color-bce tmux"
 
-#export FZF_DEFAULT_COMMAND='if [ -e cscope.files ]; then cat cscope.files; else find ./ -type f ; fi'
 export FZF_DEFAULT_COMMAND='rg --files --follow' #  --hidden --no-ignore-vcs'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-
-function fold {
-  if [ $# -eq 0 ]; then
-    /usr/bin/fold -w $COLUMNS -s
-  else
-    /usr/bin/fold $*
-  fi
-}
-
-function spell {
-  cat /usr/share/dict/words | fzf --preview 'wn {} -over | fold' --preview-window=up:60%
-}
-
-function dic {
-  if [ $# -eq 0 ]; then
-    wn `spell` -over | fold
-  else
-    wn $1 -over | fold
-  fi
-}
-
-alias gb='fzf-git-branch'
-alias gco='fzf-git-checkout'
